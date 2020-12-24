@@ -1,0 +1,118 @@
+*****************************************************************************
+Cursors
+*****************************************************************************
+=============================================================================================
+
+1.  Write a PL/SQL block to display the 5 highest paid employees from the employees table.
+
+
+======================================================================================
+~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~
+table creation
+~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~
+
+create table emp13(eid number, ename varchar(20), salary number, doj date);
+insert into emp13 values(1, 'lenin', 25000, TO_DATE('12/01/2016', 'DD/MM/YYYY'));
+insert into emp13 values(2, 'raj', 15005,TO_DATE('12/02/2008', 'DD/MM/YYYY'));
+insert into emp13 values(3, 'lola', 10005, TO_DATE('12/03/2014', 'DD/MM/YYYY'));
+insert into emp13 values(4, 'nala', 15005,TO_DATE('06/02/2001', 'DD/MM/YYYY'));
+insert into emp13 values(5, 'vala', 11000, TO_DATE('12/03/2008', 'DD/MM/YYYY'));
+insert into emp13 values(6, 'lala', 10005, TO_DATE('02/03/2015', 'DD/MM/YYYY'));
+insert into emp13 values(7, 'pola', 90000, TO_DATE('06/03/1997', 'DD/MM/YYYY'));
+
+
+
+=================================================================================
+pl sql 
+=================================================================================
+
+create or replace procedure firssst_proc1
+is
+cursor curfirst1 is select * from emp13 order by salary desc;
+emp curfirst1%ROWTYPE;
+begin
+open curfirst1;
+for a in 1..5
+loop
+fetch curfirst1 into emp;
+dbms_output.put_line('rows ' || curfirst1%ROWCOUNT);
+dbms_output.put_line(emp.eid ||'   ' || emp.ename  ||'   ' || emp.salary);
+end loop;
+close curfirst1 ;
+end;
+/
+===============================
+invoking
+============================
+execute firssst_proc1;
+~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~
+~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~
+==========================================================================================================================================================
+2.   Create a PL/SQL block to declare a cursor cur_emp to select the employee name, salary and 
+hire date from the employees table. Process each row from the cursor and if the salary is greater than 15,000 and hire date is greater than 01-Feb-1998,display the name ,salary and hire date on  the screen shown in the sample output as shown below :
+
+      John earns 10000 and joined the Organisation on 01-Nov-2002
+==========================================================================================================================================================
+create or replace procedure firssst_proc1
+is
+cursor curfirst1 is select * from emp13 where salary > 15000 and doj > date '1998-02-01';
+emp curfirst1%ROWTYPE;
+begin
+open curfirst1;
+loop
+fetch curfirst1 into emp;
+exit when curfirst1%NOTFOUND;
+dbms_output.put_line(emp.ename  ||' earns  ' || emp.salary||' and joined the organization on  ' || emp.doj);
+end loop;
+close curfirst1 ;
+end;
+/
+===============================
+invoking
+============================
+BEGIN 
+firssst_proc1;
+ END;
+/
+~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~
+~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~
+==========================================================================================================================================================
+3.  Write a procedure to display whether each employee in the employees table are rich or poor    
+based on the salary and count the number of rich and poor and simply print a ratio   NumberOfRich:NumberOfPoor e.g.
+Rich/Poor threshold must be based on the salary given as parameter to the procedure Use FOR LOOP Cursors
+==========================================================================================================================================================
+create or replace procedure firssst_proc1
+is
+cursor curfirst1 is select * from emp13;
+emp curfirst1%ROWTYPE;
+rich number :=0;
+poor number :=0;
+begin
+open curfirst1;
+for a in 1..100
+loop
+fetch curfirst1 into emp;
+exit when curfirst1%NOTFOUND;
+if emp.salary > 11000  then
+rich:=rich +1 ;
+else poor:= poor +1 ;
+end if;
+-- dbms_output.put_line(emp.eid ||'   ' || emp.ename  ||'   ' || emp.salary);
+end loop;
+dbms_output.put_line(' rich : poor ' || ' = ' || rich || ' : ' || poor);
+close curfirst1 ;
+end;
+/
+===============================
+invoking
+============================
+execute firssst_proc1;
+
+
+======
+output
+======
+rich : poor  = 4 : 3
+~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~~`~`~`~`~`~`~`~`~`~
+
+
